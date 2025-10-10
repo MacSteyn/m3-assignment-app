@@ -7,6 +7,7 @@ const { check, validationResult } = require("express-validator");
 
 const router = express.Router();
 const Registration = mongoose.model("Registration");
+
 const basic = auth.basic({
   file: path.join(__dirname, "../users.htpasswd"),
 });
@@ -50,6 +51,8 @@ router.post(
     const errors = validationResult(req);
     if (errors.isEmpty()) {
       const registration = new Registration(req.body);
+
+      // ✅ Only generate salt once
       const salt = await bcrypt.genSalt(10);
       registration.password = await bcrypt.hash(registration.password, salt);
 
